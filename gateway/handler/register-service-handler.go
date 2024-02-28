@@ -1,17 +1,18 @@
-package main
+package handler
 
 import (
 	"context"
 	"encoding/json"
-	pb "gateway/pb"
+	"gateway/pb"
+	"gateway/utils"
 	"net/http"
 	"time"
 
 	"google.golang.org/grpc/status"
 )
 
-func loginHandler(w http.ResponseWriter, r *http.Request) {
-	var req LoginRequest
+func (h *AuthServiceHandler) HandleRegistration(w http.ResponseWriter, r *http.Request) {
+	var req RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
@@ -20,19 +21,20 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(r.Context(), time.Second)
 	defer cancel()
 
-	grpcResp, err := authServiceClient.Login(ctx, &pb.LoginRequest{
+	grpcResp, err := h.AuthServiceClient.Register(ctx, &pb.RegisterRequest{
+		Name:     req.Name,
 		Email:    req.Email,
 		Password: req.Password,
+		Role:     req.Role,
 	})
 	if err != nil {
 		errorStatus, _ := status.FromError(err)
-		http.Error(w, errorStatus.Message(), convertToHTTPStatusCode(errorStatus.Code()))
+		http.Error(w, errorStatus.Message(), utils.ConvertToHTTPStatusCode(errorStatus.Code()))
 		return
 	}
 
-	resp := LoginResponse{
+	resp := RegisterResponse{
 		Success: grpcResp.Success,
-		Token:   grpcResp.Token,
 		Error:   grpcResp.Error,
 	}
 

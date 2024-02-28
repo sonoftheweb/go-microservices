@@ -40,7 +40,7 @@ func main() {
 	authServiceClient = pb.NewAuthServiceClient(conn)
 
 	// Define your route and handler
-	setupRoutes(r)
+	setupRoutes(r, authServiceClient)
 
 	// Start the HTTP server
 	log.Println("api gateway running on http://localhost:8081")

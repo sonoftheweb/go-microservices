@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"net/http"
@@ -6,8 +6,7 @@ import (
 	"google.golang.org/grpc/codes"
 )
 
-// This function converts a gRPC status code to the corresponding HTTP status code.
-func convertToHTTPStatusCode(code codes.Code) int {
+func ConvertToHTTPStatusCode(code codes.Code) int {
 	switch code {
 	case codes.OK:
 		return http.StatusOK
