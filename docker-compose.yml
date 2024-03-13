@@ -25,6 +25,16 @@ services:
     volumes:
       - ./auth/:/go/src/app
 
+  user:
+    container_name: user
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+    ports:
+      - "50053:50053"
+    volumes:
+      - ./auth/:/go/src/app
+
   redis:
     container_name: redis
     image: redis:latest
